@@ -2,7 +2,6 @@ package boxpacker
 
 import (
 	"errors"
-	"log"
 )
 
 var (
@@ -22,12 +21,12 @@ func AddItem(item *Item, qty int) {
 		Items.PushItem(*itemVol)
 	}
 
-	log.Printf("added item %d x %s", qty, item.Description);
+	Debugf("added item %d x %s", qty, item.Description);
 }
 
 func AddBox(box *Box) {
 	Boxes.PushBox(*CalcVolBox(CalcOuterDims(box)))
-	log.Printf("added box %s %v", box.Reference, box)
+	Debugf("added box %s %v", box.Reference, box)
 }
 
 // Pack items into boxes
@@ -37,7 +36,7 @@ func Pack() *MinHeap {
 	if packedBoxes.Len() > 1 {
 		// packedBoxes = RedistributeWeight(boxes, packedBoxes)
 	}
-	log.Printf("packing completed %d", packedBoxes.Len());
+	Debugf("packing completed %d", packedBoxes.Len());
 	return packedBoxes
 }
 
@@ -65,7 +64,7 @@ func doVolumePacking() (packedBoxes *MinHeap, err error) {
 
 		//Check iteration was productive
 		if packedBoxesIteration.Len() == 0 {
-			log.Printf("%s is too large to fit into any box.", Items.PeekItem().Description);
+			Debugf("%s is too large to fit into any box.", Items.PeekItem().Description);
 			err = errors.New(PACKER_ERR_ITEM_TOO_BIG)
 			return
 		}
@@ -80,7 +79,7 @@ func doVolumePacking() (packedBoxes *MinHeap, err error) {
 				if ItemCompare(packedItem, unpackedItem) {
 					err = unPackedItems.RemoveAt(unpackedKey)
 					if err != nil {
-						log.Printf("unPackedItems.RemoveAt %s", err);
+						Debugf("unPackedItems.RemoveAt %s", err);
 						return nil, err
 					}
 					break
@@ -93,7 +92,7 @@ func doVolumePacking() (packedBoxes *MinHeap, err error) {
 		for i := 0; i < unPackedItems.Len(); i++ {
 			unpackedItem, err := unPackedItems.ItemAtIndex(i)
 			if err != nil {
-				log.Printf("unPackedItems.ItemAtIndex %s", err);
+				Debugf("unPackedItems.ItemAtIndex %s", err);
 				return nil, err
 			}
 			unpackedItemList.PushItem(unpackedItem)

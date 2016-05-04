@@ -1,45 +1,49 @@
 package boxpacker
 
+import (
+	"flag"
+)
+
+
+var debug *bool = flag.Bool("debug", false, "enable debug logging")
+
+
 /*
 	var t * testing.T
 
 	 if ok := testPackBoxThreeItemsFitExactly(ctx, t); !ok{
-		 log.Printf("fail")
+		 Debugf("fail")
 	 }
 	if ok := testPackBoxThreeItemsFitEasily(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 	if ok := testPackBoxThreeItemsFitExactly(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 	if ok := testPackBoxThreeItemsFitExactlyNoRotation(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 	if ok := testPackBoxThreeItemsFitSizeButOverweight(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 	if ok := testPackBoxThreeItemsFitWeightBut2Oversize(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 	if ok := testPackTwoItemsFitExactlySideBySide(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 	if ok := testPackThreeItemsBottom2FitSideBySideOneExactlyOnTop(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 	if ok := testPackThreeItemsBottom2FitSideBySideWithSpareSpaceOneOverhangSlightlyOnTop(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 	if ok := testPackSingleItemFitsBetterRotated(ctx, t); !ok{
-		log.Printf("fail")
+		Debugf("fail")
 	}
 */
 
-
-import ("log")
 func Uline() {
-	log.Printf("init\n")
-	///	log.Printf("In pack");
 
 	NewPacker()
 
@@ -267,27 +271,14 @@ func Uline() {
 	// Length      int Depth       int Volume      int Weight      int
 	//var i = &Item{Description:"Narwhal", Width: 20, Length: 30, Depth: 10, Weight: 6}
 	//var k = &Item{Description:"Power Tower Add-on", Width: 10, Length: 3, Depth: 6, Weight: 15}
-	var i = &Item{Description:"Baseball", Width: 3, Length: 3, Depth: 3, Weight: 1}
+	var i = &Item{Description:"Baseball", Width: 8, Length: 6, Depth: 4, Weight: 1}
 	//AddItem(ctx, i, 1)
 	//AddItem(ctx, k, 1)
-	AddItem(i, 2)
+	AddItem(i, 90)
 
 	packedBoxes := Pack()
 
-	log.Printf("These items fitted into %d box(es).\n", packedBoxes.Len())
-	for _, pb := range *packedBoxes {
-		packedBox := pb.(PackedBox)
-		boxType := packedBox.Box
-		log.Printf("This box is a %s, it is %d in wide, %d in long and %d in high.\n", boxType.Reference, boxType.OuterWidth, boxType.OuterLength, boxType.OuterDepth)
-		log.Printf("The combined weight of this box and the items inside it is %d lbs.", packedBox.BoxWeight());
-		log.Printf("The items in this box are:\n");
-		itemsInTheBox := packedBox.Items
-
-		for _, i := range itemsInTheBox {
-			item := i.(Item)
-			log.Printf("%s", item.Description)
-		}
-	}
+	Report(packedBoxes)
 }
 
 

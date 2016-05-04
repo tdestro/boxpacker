@@ -2,12 +2,11 @@ package boxpacker
 
 import (
 	"math"
-	"log"
 )
 
 func VolumePackerPack(box Box, items *MinHeap) *PackedBox {
 
-	log.Printf("[EVALUATING BOX] %s", box.Reference)
+	Debugf("[EVALUATING BOX] %s", box.Reference)
 
 	packedItems := NewMinHeap()
 	remainingDepth := box.InnerDepth
@@ -26,13 +25,13 @@ func VolumePackerPack(box Box, items *MinHeap) *PackedBox {
 
 		if isItemTooLargeForBox(itemToPack, remainingDepth, remainingWeight) {
 			items.PopItem()
-			log.Printf("%s depth or weight too much.", itemToPack.Description)
+			Debugf("%s depth or weight too much.", itemToPack.Description)
 			continue
 		}
 
-		log.Printf("evaluating item %s %d x %d x %d", itemToPack.Description, itemToPack.Length, itemToPack.Width, itemToPack.Depth)
-		log.Printf("remaining width: %d  length: %d  depth: %d", remainingWidth, remainingLength, remainingDepth)
-		log.Printf("remaining layerWidth: %d  layerLength: %d  layerDepth: %d", layerWidth, layerLength, layerDepth)
+		Debugf("evaluating item %s %d x %d x %d", itemToPack.Description, itemToPack.Length, itemToPack.Width, itemToPack.Depth)
+		Debugf("remaining width: %d  length: %d  depth: %d", remainingWidth, remainingLength, remainingDepth)
+		Debugf("remaining layerWidth: %d  layerLength: %d  layerDepth: %d", layerWidth, layerLength, layerDepth)
 
 		itemWidth := itemToPack.Width
 		itemLength := itemToPack.Length
@@ -50,12 +49,12 @@ func VolumePackerPack(box Box, items *MinHeap) *PackedBox {
 			}
 
 			if (fitsBetterRotated(itemToPack, nextItem, remainingWidth, remainingLength)) {
-				log.Printf("Fits (better) unrotated")
+				Debugf("Fits (better) unrotated")
 				remainingLength -= itemLength
 				layerLength += itemLength
 				layerWidth = max(itemWidth, layerWidth)
 			} else {
-				log.Printf("Fits (better) rotated")
+				Debugf("Fits (better) rotated")
 				remainingLength -= itemWidth
 				layerLength += itemWidth
 				layerWidth = max(itemLength, layerWidth)
@@ -77,14 +76,14 @@ func VolumePackerPack(box Box, items *MinHeap) *PackedBox {
 
 		} else {
 			if (remainingWidth >= min(itemWidth, itemLength) && isLayerStarted(layerWidth, layerLength, layerDepth)) {
-				log.Printf("No more fit in lengthwise, resetting for new row")
+				Debugf("No more fit in lengthwise, resetting for new row")
 				remainingLength += layerLength
 				remainingWidth -= layerWidth
 				layerWidth = 0
 				layerLength = 0
 				continue
 			} else if (remainingLength < min(itemWidth, itemLength) || layerDepth == 0) {
-				log.Printf("Doesn't fit on layer even when empty")
+				Debugf("Doesn't fit on layer even when empty")
 				items.PopItem()
 				continue
 			}
@@ -104,12 +103,12 @@ func VolumePackerPack(box Box, items *MinHeap) *PackedBox {
 			layerLength = 0
 			layerDepth = 0
 
-			log.Printf("Doesn't fit, so starting next vertical layer")
+			Debugf("Doesn't fit, so starting next vertical layer")
 		}
 	}
 
 
-	log.Printf("Done with this box.")
+	Debugf("Done with this box.")
 	packedBox := NewPackedBox(box, packedItems, remainingWidth, remainingLength, remainingDepth, remainingWeight)
 	return packedBox
 }

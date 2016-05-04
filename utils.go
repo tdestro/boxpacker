@@ -1,6 +1,6 @@
 package boxpacker
 
-import ("log")
+import "log"
 
 func Report(packedBoxes *MinHeap) {
 
@@ -21,3 +21,13 @@ func Report(packedBoxes *MinHeap) {
 	}
 }
 
+
+func Debugf(format string, args ...interface{}) {
+	if *debug {
+		log.Printf("DEBUG "+format, args)
+	}
+}
+
+func Errorf(format string, args ...interface{}) {
+	log.Printf("ERROR "+format, args)
+}
