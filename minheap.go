@@ -51,7 +51,7 @@ type PackerMinHeapInterface interface {
 //
 
 func NewMinHeap() *MinHeap {
-	//log.Println("init\n")
+
 	mh := &MinHeap{}
 	heap.Init(mh)
 	return mh

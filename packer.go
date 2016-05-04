@@ -1,9 +1,8 @@
 package boxpacker
 
 import (
-	"golang.org/x/net/context"
-	aelog "google.golang.org/appengine/log"
 	"errors"
+	"log"
 )
 
 var (
@@ -17,34 +16,34 @@ func  NewPacker(){
 	Boxes = NewMinHeap()
 }
 
-func AddItem(ctx context.Context, item *Item, qty int) {
+func AddItem(item *Item, qty int) {
 	itemVol := CalcVolItem(item)
 	for i := 0; i < qty; i++ {
 		Items.PushItem(*itemVol)
 	}
 
-	aelog.Debugf(ctx, "added item %d x %s", qty, item.Description);
+	log.Printf("added item %d x %s", qty, item.Description);
 }
 
-func AddBox(ctx context.Context, box *Box) {
+func AddBox(box *Box) {
 	Boxes.PushBox(*CalcVolBox(CalcOuterDims(box)))
-	aelog.Debugf(ctx, "added box %s %v", box.Reference, box)
+	log.Printf("added box %s %v", box.Reference, box)
 }
 
 // Pack items into boxes
-func Pack(ctx context.Context) *MinHeap {
+func Pack() *MinHeap {
 
-	packedBoxes, _ := doVolumePacking(ctx)
+	packedBoxes, _ := doVolumePacking()
 	if packedBoxes.Len() > 1 {
 		// packedBoxes = RedistributeWeight(boxes, packedBoxes)
 	}
-	aelog.Debugf(ctx, "packing completed %d", packedBoxes.Len());
+	log.Printf("packing completed %d", packedBoxes.Len());
 	return packedBoxes
 }
 
 // Pack items into boxes using the principle of largest volume item first
 
-func doVolumePacking(ctx context.Context) (packedBoxes *MinHeap, err error) {
+func doVolumePacking() (packedBoxes *MinHeap, err error) {
 	packedBoxes = NewMinHeap()
 	//Keep going until everything packed
 	for (Items.Len() > 0) {
@@ -53,7 +52,7 @@ func doVolumePacking(ctx context.Context) (packedBoxes *MinHeap, err error) {
 
 		for (boxesToEvaluate.Len() > 0) {
 			box := boxesToEvaluate.PopBox()
-			packedBox := VolumePackerPack(ctx, *box, Items.Copy());
+			packedBox := VolumePackerPack(*box, Items.Copy());
 
 			if packedBox.Items.Len() > 0 {
 				packedBoxesIteration.PushPackedBox(*packedBox)
@@ -66,7 +65,7 @@ func doVolumePacking(ctx context.Context) (packedBoxes *MinHeap, err error) {
 
 		//Check iteration was productive
 		if packedBoxesIteration.Len() == 0 {
-			aelog.Errorf(ctx, "%s is too large to fit into any box.", Items.PeekItem().Description);
+			log.Printf("%s is too large to fit into any box.", Items.PeekItem().Description);
 			err = errors.New(PACKER_ERR_ITEM_TOO_BIG)
 			return
 		}
@@ -81,7 +80,7 @@ func doVolumePacking(ctx context.Context) (packedBoxes *MinHeap, err error) {
 				if ItemCompare(packedItem, unpackedItem) {
 					err = unPackedItems.RemoveAt(unpackedKey)
 					if err != nil {
-						aelog.Errorf(ctx, "unPackedItems.RemoveAt %s", err);
+						log.Printf("unPackedItems.RemoveAt %s", err);
 						return nil, err
 					}
 					break
@@ -94,7 +93,7 @@ func doVolumePacking(ctx context.Context) (packedBoxes *MinHeap, err error) {
 		for i := 0; i < unPackedItems.Len(); i++ {
 			unpackedItem, err := unPackedItems.ItemAtIndex(i)
 			if err != nil {
-				aelog.Errorf(ctx, "unPackedItems.ItemAtIndex %s", err);
+				log.Printf("unPackedItems.ItemAtIndex %s", err);
 				return nil, err
 			}
 			unpackedItemList.PushItem(unpackedItem)

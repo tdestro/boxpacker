@@ -1,15 +1,13 @@
 package boxpacker
 
 import (
-	"golang.org/x/net/context"
-	aelog "google.golang.org/appengine/log"
 	"math"
-	"time"
+	"log"
 )
 
-func VolumePackerPack(ctx context.Context, box Box, items *MinHeap) *PackedBox {
+func VolumePackerPack(box Box, items *MinHeap) *PackedBox {
 
-	aelog.Debugf(ctx, "[EVALUATING BOX] %s", box.Reference)
+	log.Printf("[EVALUATING BOX] %s", box.Reference)
 
 	packedItems := NewMinHeap()
 	remainingDepth := box.InnerDepth
@@ -21,25 +19,20 @@ func VolumePackerPack(ctx context.Context, box Box, items *MinHeap) *PackedBox {
 	layerLength := 0
 	layerDepth := 0
 
-
-
 	for (items.Len() > 0) {
 
-		start := time.Now()
 		itemToPack := items.PeekItem()
 		// skip items that are simply too large
 
 		if isItemTooLargeForBox(itemToPack, remainingDepth, remainingWeight) {
 			items.PopItem()
-			aelog.Debugf(ctx, "%s depth or weight too much.", itemToPack.Description)
+			log.Printf("%s depth or weight too much.", itemToPack.Description)
 			continue
 		}
-		elapsed := time.Since(start)
-		aelog.Debugf(ctx,"Took %s", elapsed)
 
-		aelog.Debugf(ctx, "evaluating item %s %d x %d x %d", itemToPack.Description, itemToPack.Length, itemToPack.Width, itemToPack.Depth)
-		aelog.Debugf(ctx, "remaining width: %d  length: %d  depth: %d", remainingWidth, remainingLength, remainingDepth)
-		aelog.Debugf(ctx, "remaining layerWidth: %d  layerLength: %d  layerDepth: %d", layerWidth, layerLength, layerDepth)
+		log.Printf("evaluating item %s %d x %d x %d", itemToPack.Description, itemToPack.Length, itemToPack.Width, itemToPack.Depth)
+		log.Printf("remaining width: %d  length: %d  depth: %d", remainingWidth, remainingLength, remainingDepth)
+		log.Printf("remaining layerWidth: %d  layerLength: %d  layerDepth: %d", layerWidth, layerLength, layerDepth)
 
 		itemWidth := itemToPack.Width
 		itemLength := itemToPack.Length
@@ -57,12 +50,12 @@ func VolumePackerPack(ctx context.Context, box Box, items *MinHeap) *PackedBox {
 			}
 
 			if (fitsBetterRotated(itemToPack, nextItem, remainingWidth, remainingLength)) {
-				aelog.Debugf(ctx, "Fits (better) unrotated")
+				log.Printf("Fits (better) unrotated")
 				remainingLength -= itemLength
 				layerLength += itemLength
 				layerWidth = max(itemWidth, layerWidth)
 			} else {
-				aelog.Debugf(ctx, "Fits (better) rotated")
+				log.Printf("Fits (better) rotated")
 				remainingLength -= itemWidth
 				layerLength += itemWidth
 				layerWidth = max(itemLength, layerWidth)
@@ -84,14 +77,14 @@ func VolumePackerPack(ctx context.Context, box Box, items *MinHeap) *PackedBox {
 
 		} else {
 			if (remainingWidth >= min(itemWidth, itemLength) && isLayerStarted(layerWidth, layerLength, layerDepth)) {
-				aelog.Debugf(ctx, "No more fit in lengthwise, resetting for new row")
+				log.Printf("No more fit in lengthwise, resetting for new row")
 				remainingLength += layerLength
 				remainingWidth -= layerWidth
 				layerWidth = 0
 				layerLength = 0
 				continue
 			} else if (remainingLength < min(itemWidth, itemLength) || layerDepth == 0) {
-				aelog.Debugf(ctx, "Doesn't fit on layer even when empty")
+				log.Printf("Doesn't fit on layer even when empty")
 				items.PopItem()
 				continue
 			}
@@ -111,12 +104,12 @@ func VolumePackerPack(ctx context.Context, box Box, items *MinHeap) *PackedBox {
 			layerLength = 0
 			layerDepth = 0
 
-			aelog.Debugf(ctx, "Doesn't fit, so starting next vertical layer")
+			log.Printf("Doesn't fit, so starting next vertical layer")
 		}
 	}
 
 
-	aelog.Debugf(ctx, "Done with this box.")
+	log.Printf("Done with this box.")
 	packedBox := NewPackedBox(box, packedItems, remainingWidth, remainingLength, remainingDepth, remainingWeight)
 	return packedBox
 }

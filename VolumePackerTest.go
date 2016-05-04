@@ -25,7 +25,7 @@ func testPackBoxThreeItemsFitEasily(ctx context.Context, t *testing.T) bool {
 	items.PushItem(NewTestItem("Item 2", 250, 250, 2, 200))
 	items.PushItem(NewTestItem("Item 3", 250, 250, 2, 200))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 
 	return assert.Equal(3, packedBox.ItemCount(), "they should be equal")
 }
@@ -39,7 +39,7 @@ func testPackBoxThreeItemsFitExactly(ctx context.Context, t *testing.T) bool {
 	items.PushItem(NewTestItem("Item 2", 296, 296, 2, 500))
 	items.PushItem(NewTestItem("Item 3", 296, 296, 4, 290))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 	return assert.Equal(3, packedBox.ItemCount(), "they should be equal")
 }
 
@@ -51,7 +51,7 @@ func testPackBoxThreeItemsFitExactlyNoRotation(ctx context.Context, t *testing.T
 	items.PushItem(NewTestItem("Item 1", 296, 148, 2, 200))
 	items.PushItem(NewTestItem("Item 2", 296, 148, 2, 500))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 	return assert.Equal(2, packedBox.ItemCount(), "they should be equal")
 }
 
@@ -64,7 +64,7 @@ func testPackBoxThreeItemsFitSizeButOverweight(ctx context.Context, t *testing.T
 	items.PushItem(NewTestItem("Item 2", 250, 250, 2, 500))
 	items.PushItem(NewTestItem("Item 3", 250, 250, 2, 200))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 	return assert.Equal(2, packedBox.ItemCount(), "they should be equal")
 }
 
@@ -77,7 +77,7 @@ func testPackBoxThreeItemsFitWeightBut2Oversize(ctx context.Context, t *testing.
 	items.PushItem(NewTestItem("Item 2", 297, 296, 2, 500))
 	items.PushItem(NewTestItem("Item 3", 296, 296, 4, 290))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 	return assert.Equal(1, packedBox.ItemCount(), "they should be equal")
 }
 
@@ -89,7 +89,7 @@ func testPackTwoItemsFitExactlySideBySide(ctx context.Context, t *testing.T) boo
 	items.PushItem(NewTestItem("Item 1", 296, 248, 8, 200))
 	items.PushItem(NewTestItem("Item 2", 248, 296, 8, 200))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 	return assert.Equal(2, packedBox.ItemCount(), "they should be equal")
 }
 
@@ -102,7 +102,7 @@ func testPackThreeItemsBottom2FitSideBySideOneExactlyOnTop(ctx context.Context, 
 	items.PushItem(NewTestItem("Item 2", 148, 248, 4, 200))
 	items.PushItem(NewTestItem("Item 3", 296, 296, 4, 200))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 	return assert.Equal(3, packedBox.ItemCount(), "they should be equal")
 }
 
@@ -115,7 +115,7 @@ func testPackThreeItemsBottom2FitSideBySideWithSpareSpaceOneOverhangSlightlyOnTo
 	items.PushItem(NewTestItem("Item 2", 110, 110, 4, 200))
 	items.PushItem(NewTestItem("Item 3", 110, 110, 4, 200))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 	return assert.Equal(3, packedBox.ItemCount(), "they should be equal")
 }
 
@@ -126,6 +126,6 @@ func testPackSingleItemFitsBetterRotated(ctx context.Context, t *testing.T) bool
 
 	items.PushItem(NewTestItem("Item 1", 250, 290, 2, 200))
 
-	packedBox := VolumePackerPack(ctx, box, items.Copy());
+	packedBox := VolumePackerPack(box, items.Copy());
 	return assert.Equal(1, packedBox.ItemCount(), "they should be equal")
 }
